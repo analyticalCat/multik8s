@@ -1,0 +1,19 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:  # additional config options higher level config around ingress obj
+    kubernetes.io/ingress.class: nginx  # we want to create the controller based on nginx project.  tell kube
+    nginx.ingress.kubernetes.io/rewrite-target: /$1  # config how the actual copy of nginx behaves.  remove the /api from the inconing request, go to server.
+spec:
+  rules:
+    - http:
+        paths: 
+          - path: /?(.*)  # we sned the request to client-cluster-ip-service
+            backend: 
+              serviceName: client-cluster-ip-service
+              servicePort: 3000
+          - path: /api/?(.*)  # we sned the request to server-cluster
+            backend:
+              serviceName: server-cluster-ip-service
+              servicePort: 5000

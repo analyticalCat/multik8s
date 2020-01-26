@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: work-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      component: worker
+  template:
+    metadata:
+      labels:
+        component: worker
+    spec:
+      containers:
+        - name: worker
+          image: jesszhang/multi-worker
+          env: 
+            - name: REDIS_HOST
+              value: redis-cluster-ip-service  # this is where it will connect to redis
+            - name: REDIS_PORT
+              value: '6379'
+
+        # there is no other stuff need to connect to the worker.  Nothing will request to the worker.  So the worker doesn't need any port or service. no associated service file
+        # we haven't setup redis or postgres yet so the build is not going to go well.
+        # kubernetes will not update the object if nothing is changed.  
+
