@@ -1,0 +1,14 @@
+sudo: required  # making use of docker
+services:
+  - docker
+before_install:
+  - curl https://sdk.cloud.google.com | bash > /dev/null;       # download the sdk and install google sdk
+  - source $HOME/google-cloud-sdk/path.bash.inc     # source the path.bash.inc file and apply the config from that file.
+  - gcloud components update kubectl  # install the kubectl cli
+  - gcloud auth activate-service-account --key-file service-account.json  #authorization with gcloud providing a set of credentials.  we don't have it yet.  will do later.  no way we allow access to these credentials.  
+  # create a service account
+  # download service account credentials in a json file. sensitive info in the file.  can't upload to github.
+  # download and install travis cli
+  # Encrypt and upload the json file to our travis account.
+  # in travis.yml, add code to unencrypt the json file and load it into GCloud SDK
+
