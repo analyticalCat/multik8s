@@ -21,7 +21,7 @@ before_install:
   - gcloud config set compute/zone us-west2-b # in Kubernetes/compute/kube engines 
   - gcloud container clusters get-credentials multi-cluster
   # we will use this to update kubernetes with our deployments and other stuff.
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" -password-stdin  # this assumes we have set the environment variable in Travis
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  # this assumes we have set the environment variable in Travis
   - docker build -t jesszhang/react-test -f ./client/Dockerfile.dev ./client # .dev file has the dependencies for test
 script:
   - docker run -e CI=true jesszhang/react-test npm run test -- --coverage  # by default, npm is not going to exit.  This is to run test
