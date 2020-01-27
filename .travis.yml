@@ -2,9 +2,9 @@ sudo: required  # making use of docker
 services:
   - docker
 env:
-    global:
-      - SHA=$(git rev-parse HEAD)
-      - CLOUDSDK_CORE_DIABLE_PROMPTS=1
+  global:
+    - SHA=$(git rev-parse HEAD)
+    - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d  # this is added after encrypt the json file using travis cli in a docker container and copied from the instruction from executing travis encrypt-file xxx.json -r (githubrepo)
   - curl https://sdk.cloud.google.com | bash > /dev/null;       # download the sdk and install google sdk
@@ -20,22 +20,14 @@ before_install:
   - gcloud config set project milti-k8s-266321  # this is not the short id in GCE.  It is the longer id.
   - gcloud config set compute/zone us-west2-b # in Kubernetes/compute/kube engines 
   - gcloud container clusters get-credentials multi-cluster
-
   # we will use this to update kubernetes with our deployments and other stuff.
-  -echo "$DOCKER_PASSWORD" | docker loging -u "$DOCKER_USERNAME" -password-stdin  # this assumes we have set the environment variable in Travis
+  - echo "$DOCKER_PASSWORD" | docker loging -u "$DOCKER_USERNAME" -password-stdin  # this assumes we have set the environment variable in Travis
   - docker build -t jesszhang/react-test -f ./client/Dockerfile.dev ./client # .dev file has the dependencies for test
-
 script:
   - docker run -e CI=true jesszhang/react-test npm run test -- --coverage  # by default, npm is not going to exit.  This is to run test
-
-
-
 deploy:
   provider: script  # no built in provider from kubernetes, we can't just say provider: beanstalk and be enough
   script: bash ./deploy.sh  # we are going to put deploy.sh together.  building image, apply, and deploy.
   on: 
     branch: master #only mastr branch will trigger the above
     
-
-
-
