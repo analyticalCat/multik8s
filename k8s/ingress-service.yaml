@@ -1,7 +1,7 @@
 apiVersion: extensions/v1beta1
 kind: Ingress
 metadata:
-  name: ingress-service
+  name: ingress-service  # we rely on ingress we install on local to work.  we have to install ingress on GCP for the ingress to work in production. we want ingress-nginx
   annotations:  # additional config options higher level config around ingress obj
     kubernetes.io/ingress.class: nginx  # we want to create the controller based on nginx project.  tell kube
     nginx.ingress.kubernetes.io/rewrite-target: /$1  # config how the actual copy of nginx behaves.  remove the /api from the inconing request, go to server.
