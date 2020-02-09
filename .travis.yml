@@ -7,10 +7,10 @@ env:
     - CLOUDSDK_CORE_DISABLE_PROMPTS=1
 before_install:
   - openssl aes-256-cbc -K $encrypted_0c35eebf403c_key -iv $encrypted_0c35eebf403c_iv -in service-account.json.enc -out service-account.json -d  # this is added after encrypt the json file using travis cli in a docker container and copied from the instruction from executing travis encrypt-file xxx.json -r (githubrepo)
-  - curl https://sdk.cloud.google.com | bash > /dev/null;       # download the sdk and install google sdk
-  - source $HOME/google-cloud-sdk/path.bash.inc     # source the path.bash.inc file and apply the config from that file.
-  - gcloud components update kubectl  # install the kubectl cli
-  - gcloud auth activate-service-account --key-file service-account.json  #authorization with gcloud providing a set of credentials.  we don't have it yet.  will do later.  no way we allow access to these credentials.  
+  - curl https://sdk.cloud.google.com | bash > /dev/null;       # download the sdk and install google sdk and install
+  - source $HOME/google-cloud-sdk/path.bash.inc     # source the path.bash.inc file and apply the config from that file.  these two commands will setup google clouds locally for you.
+  - gcloud components update kubectl  # install the kubectl cli inside travis
+  - gcloud auth activate-service-account --key-file service-account.json  #authorization with gcloud providing a set of credentials. gcloud will decrypt and put a .json file in the correct place. 
   # create a service account here
   # download service account credentials in a json file. sensitive info in the file.  can't upload to github.
   # download and install travis cli
@@ -18,13 +18,13 @@ before_install:
   # in travis.yml, add code to unencrypt the json file and load it into GCloud SDK
   # after setting up the service account file.
   - gcloud config set project milti-k8s-266321  # this is not the short id in GCE.  It is the longer id.
-  - gcloud config set compute/zone us-west2-b # in Kubernetes/compute/kube engines 
-  - gcloud container clusters get-credentials multi-cluster
+  - gcloud config set compute/zone us-central1-a # in Kubernetes/compute/kube engines 
+  - gcloud container clusters get-credentials second-cluster
   # we will use this to update kubernetes with our deployments and other stuff.
-  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  # this assumes we have set the environment variable in Travis
-  - docker build -t jesszhang/react-test -f ./client/Dockerfile.dev ./client # .dev file has the dependencies for test
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin  # this assumes we have set the environment docker_username and docker_password variable in Travis.  We have access to docker because we specified this on top of this file.
+  - docker build -t jesszhang/react-test -f ./client/Dockerfile.dev ./client # .dev file has the dependencies for test  react-test is a temp name
 script:
-  - docker run -e CI=true jesszhang/react-test npm run test -- --coverage  # by default, npm is not going to exit.  This is to run test
+  - docker run -e CI=true jesszhang/react-test npm run test -- --coverage  # by default, npm is not going to exit.  This is to run test. on personal project, replace this line with whatever we need to run the test.
 deploy:
   provider: script  # no built in provider from kubernetes, we can't just say provider: beanstalk and be enough
   script: bash ./deploy.sh  # we are going to put deploy.sh together.  building image, apply, and deploy.
