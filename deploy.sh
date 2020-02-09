@@ -18,5 +18,5 @@ kubectl apply -f k8s
 # Imperatively set latest images versions without specifying the version every time
 kubectl set image deployments/server-deployment server=jesszhang/multi-server:$SHA  # the name property from the server-deployment.yaml
 kubectl set image deployments/client-deployment client=jesszhang/multi-client:$SHA
-kubectl set image deployments/worker-deployment worker=jesszhang/multip-worker:$SHA
+kubectl set image deployments/worker-deployment worker=jesszhang/multi-worker:$SHA
 
