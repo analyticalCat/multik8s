@@ -9,9 +9,9 @@ docker push jesszhang/multi-client:latest
 docker push jesszhang/multi-server:latest
 docker push jesszhang/multi-worker:latest
 
-docker push jesszhang/multi-client:SHA
-docker push jesszhang/multi-server:SHA
-docker push jesszhang/multi-worker:SHA
+docker push jesszhang/multi-client:$SHA
+docker push jesszhang/multi-server:$SHA
+docker push jesszhang/multi-worker:$SHA
 
 # apply all configs in k8s 
 kubectl apply -f k8s
